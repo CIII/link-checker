@@ -38,24 +38,36 @@ class LinkChecker
   #
   # @param source [String] Either a file path or a URL.
   # @return [Array] A list of URI strings.
-  def self.external_link_uri_strings(source)
+  def self.external_link_uri_strings(source, target)
     links = Nokogiri::HTML(source).css('a').select {|link|
         !link.attribute('href').nil?
-    }.map{|link| URI.join(@target, link.attributes['href'].value).to_s unless link.attributes['href'].value =~ /\//}
+        link.attribute('href').value != "/" && 
+        !link.attribute('href').value.include?('mailto') &&
+        !link.attribute('href').value.include?('javascript:')
+    }.map{|link| URI.join(target, link.attributes['href'].value).to_s }
     
     images = Nokogiri::HTML(source).css('img').select {|link|
         !link.attribute('src').nil?
-    }.map{|link| URI.join(@target, link.attributes['src'].value).to_s unless link.attributes['src'].value =~ /\// }
+        link.attribute('src').value != "/" && 
+        !link.attribute('src').value.include?('mailto') &&
+        !link.attribute('src').value.include?('javascript:')
+    }.map{|link| URI.join(target, link.attributes['src'].value).to_s }
     
     css = Nokogiri::HTML(source).css('link').select {|link|
         !link.attribute('href').nil?
-    }.map{|link| URI.join(@target, link.attributes['href'].value).to_s unless link.attributes['href'].value =~ /\// }
+        link.attribute('href').value != "/" && 
+        !link.attribute('href').value.include?('mailto') &&
+        !link.attribute('href').value.include?('javascript:')
+    }.map{|link| URI.join(target, link.attributes['href'].value).to_s }
     
     javascript = Nokogiri::HTML(source).css('script').select {|link|
-        !link.attribute('src').nil?
-    }.map{|link| URI.join(@target, link.attributes['src'].value).to_s unless link.attributes['src'].value =~ /\// }
+        !link.attribute('src').nil? && 
+        link.attribute('src').value != "/" && 
+        !link.attribute('src').value.include?('mailto') &&
+        !link.attribute('src').value.include?('javascript:')
+    }.map{|link| URI.join(target, link.attributes['src'].value).to_s }
     
-    puts "Return array: #{images + css + javascript + links}\n"
+    #puts "Return array: #{images + css + javascript + links}\n"
     return images + css + javascript + links
   end
 
@@ -162,7 +174,7 @@ class LinkChecker
     Thread.new do
       threads = []
       results = []
-      self.class.external_link_uri_strings(page).each do |uri_string|
+      self.class.external_link_uri_strings(page, @target).each do |uri_string|
         Thread.exclusive { @links << page }
         wait_to_spawn_thread
         threads << Thread.new do
