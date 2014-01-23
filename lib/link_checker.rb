@@ -41,19 +41,19 @@ class LinkChecker
   def self.external_link_uri_strings(source)
     links = Nokogiri::HTML(source).css('a').select {|link|
         !link.attribute('href').nil?
-    }.map{|link| URI.join(@target, link.attributes['href'].value).to_s }
+    }.map{|link| URI.join(@target, link.attributes['href'].value) }
     
     images = Nokogiri::HTML(source).css('img').select {|link|
         !link.attribute('src').nil?
-    }.map{|link| URI.join(@target, link.attributes['src'].value).to_s }
+    }.map{|link| URI.join(@target, link.attributes['src'].value) }
     
     css = Nokogiri::HTML(source).css('link').select {|link|
         !link.attribute('href').nil?
-    }.map{|link| URI.join(@target, link.attributes['href'].value).to_s }
+    }.map{|link| URI.join(@target, link.attributes['href'].value) }
     
     javascript = Nokogiri::HTML(source).css('script').select {|link|
         !link.attribute('src').nil?
-    }.map{|link| URI.join(@target, link.attributes['src'].value).to_s }
+    }.map{|link| URI.join(@target, link.attributes['src'].value) }
     
     puts "Return array: #{images + css + javascript + links}\n"
     return images + css + javascript + links
