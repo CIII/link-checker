@@ -7,7 +7,6 @@ Gem::Specification.new do |s|
   s.name = "link-checker"
   s.version = "0.7.2"
 
-  s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Ryan Alyn Porter"]
   s.date = "2012-10-09"
   s.description = "A Ruby gem for checking the links in a web site. Can either scan files or crawl pages. Multi-threaded, with red/green colored output, support for SSL, and support for following redirects. Works great with Octopress, Jekyll, or any collection of static HTML files. With 100% RSpec coverage."
