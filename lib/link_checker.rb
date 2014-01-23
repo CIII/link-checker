@@ -40,23 +40,19 @@ class LinkChecker
   # @return [Array] A list of URI strings.
   def self.external_link_uri_strings(source)
     links = Nokogiri::HTML(source).css('a').select {|link|
-        !link.attribute('href').nil? &&
-        link.attribute('href').value =~ /^https?\:\/\//
+        !link.attribute('href').nil?
     }.map{|link| link.attributes['href'].value }
     
     images = Nokogiri::HTML(source).css('img').select {|link|
-        !link.attribute('src').nil? &&
-        link.attribute('src').value =~ /^https?\:\/\//
+        !link.attribute('src').nil?
     }.map{|link| link.attributes['src'].value }
     
     css = Nokogiri::HTML(source).css('link').select {|link|
-        !link.attribute('href').nil? &&
-        link.attribute('href').value =~ /^https?\:\/\//
+        !link.attribute('href').nil?
     }.map{|link| link.attributes['href'].value }
     
     javascript = Nokogiri::HTML(source).css('script').select {|link|
-        !link.attribute('src').nil? &&
-        link.attribute('src').value =~ /^https?\:\/\//
+        !link.attribute('src').nil?
     }.map{|link| link.attributes['src'].value }
     
     puts "Return array: #{images + css + javascript + links}\n"
