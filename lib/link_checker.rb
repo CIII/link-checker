@@ -59,6 +59,7 @@ class LinkChecker
         link.attribute('src').value =~ /^https?\:\/\//
     }.map{|link| link.attributes['src'].value }
     
+    puts "Images: #{images}\nCSS: #{css}\nJavascript: #{javascript}\nLinks: #{links}\n"
     return images + css + javascript + links
   end
 
