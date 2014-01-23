@@ -377,7 +377,7 @@ Gem::Specification.new do |s|
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<nokogiri>, ["~> 1.5.5"])
+      s.add_runtime_dependency(%q<nokogiri>, [">= 1.5.5"])
       s.add_runtime_dependency(%q<colorize>, ["~> 0.5.8"])
       s.add_runtime_dependency(%q<anemone>, ["~> 0.7.2"])
       s.add_runtime_dependency(%q<trollop>, ["~> 2.0"])
