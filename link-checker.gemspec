@@ -389,7 +389,7 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<redcarpet>, ["~> 2.1.1"])
       s.add_development_dependency(%q<debugger>, [">= 0"])
     else
-      s.add_dependency(%q<nokogiri>, ["~> 1.5.5"])
+      s.add_dependency(%q<nokogiri>, [">= 1.5.5"])
       s.add_dependency(%q<colorize>, ["~> 0.5.8"])
       s.add_dependency(%q<anemone>, ["~> 0.7.2"])
       s.add_dependency(%q<trollop>, ["~> 2.0"])
