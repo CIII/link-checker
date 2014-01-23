@@ -39,10 +39,27 @@ class LinkChecker
   # @param source [String] Either a file path or a URL.
   # @return [Array] A list of URI strings.
   def self.external_link_uri_strings(source)
-    Nokogiri::HTML(source).css('a').select {|link|
+    links = Nokogiri::HTML(source).css('a').select {|link|
         !link.attribute('href').nil? &&
         link.attribute('href').value =~ /^https?\:\/\//
     }.map{|link| link.attributes['href'].value }
+    
+    images = Nokogiri::HTML(source).css('img').select {|link|
+        !link.attribute('src').nil? &&
+        link.attribute('src').value =~ /^https?\:\/\//
+    }.map{|link| link.attributes['src'].value }
+    
+    css = Nokogiri::HTML(source).css('link').select {|link|
+        !link.attribute('href').nil? &&
+        link.attribute('href').value =~ /^https?\:\/\//
+    }.map{|link| link.attributes['href'].value }
+    
+    javascript = Nokogiri::HTML(source).css('script').select {|link|
+        !link.attribute('src').nil? &&
+        link.attribute('src').value =~ /^https?\:\/\//
+    }.map{|link| link.attributes['src'].value }
+    
+    return images + css + javascript + links
   end
 
   # Check one URL.
