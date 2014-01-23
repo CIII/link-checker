@@ -41,7 +41,7 @@ class LinkChecker
   def self.external_link_uri_strings(source)
     links = Nokogiri::HTML(source).css('a').select {|link|
         !link.attribute('href').nil?
-    }.map{|link| URI.join(@target, @link.attributes['href'].value) }
+    }.map{|link| URI.join(@target, link.attributes['href'].value).to_s }
     
     images = Nokogiri::HTML(source).css('img').select {|link|
         !link.attribute('src').nil?
