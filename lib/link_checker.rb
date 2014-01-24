@@ -78,33 +78,12 @@ class LinkChecker
   # @return [LinkChecker::Result] One of the following objects: {LinkChecker::Good},
   #   {LinkChecker::Redirect}, or {LinkChecker::Error}.
   def self.check_uri(uri, redirected=false)
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = true if uri.scheme == "https"
-    http.start do
-      path = (uri.path.empty?) ? '/' : uri.path
-      http.request_get(path) do |response|
-        case response
-        when Net::HTTPSuccess then
-          if redirected
-            return Redirect.new(:final_destination_uri_string => uri.to_s)
-          else
-            return Good.new(:uri_string => uri.to_s)
-          end
-        when Net::HTTPRedirection then
-          uri =
-            if response['location'].match(/\:\/\//) # Allows for https://
-              URI(response['location'])
-            else
-              # If the redirect is relative we need to build a new uri
-              # using the current uri as a base.
-              URI.join("#{uri.scheme}://#{uri.host}:#{uri.port}", response['location'])
-            end          
-          return self.check_uri(uri, true)
-        else
-          return Error.new(:uri_string => uri.to_s, :error => response)
-        end
-      end
-    end
+    response = open(uri).status
+     if response[0] == "200"
+       return Good.new(:uri_string => uri.to_s)
+     else
+       return Error.new(:uri_string => uri.to_s, :error => response)
+     end
   end
 
   # Check the URLs in the @target, either using {#check_uris_by_crawling} or
