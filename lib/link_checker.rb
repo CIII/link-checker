@@ -22,6 +22,7 @@ class LinkChecker
     @errors = []
     @warnings = []
     @return_code = 0
+    @@already_checked ||= []
 
     @options[:max_threads] ||= 4
     @options[:no_warnings] ||= false
@@ -44,29 +45,33 @@ class LinkChecker
         !link.attribute('href').nil? &&
         link.attribute('href').value != "/" && 
         !link.attribute('href').value.include?('mailto') &&
-        !link.attribute('href').value.include?('javascript:')
-    }.map{|link| URI.join(target, link.attributes['href'].value).to_s }
+        !link.attribute('href').value.include?('javascript:') &&
+        !@@already_checked.include?(link.attribute('href').value)
+    }.map{|link| @@already_checked.push(link.attributes['href'].value); URI.join(target, link.attributes['href'].value).to_s }
     
     images = Nokogiri::HTML(source).css('img').select {|link|
         !link.attribute('src').nil? &&
         link.attribute('src').value != "/" && 
         !link.attribute('src').value.include?('mailto') &&
-        !link.attribute('src').value.include?('javascript:')
-    }.map{|link| URI.join(target, link.attributes['src'].value).to_s }
+        !link.attribute('src').value.include?('javascript:') &&
+        !@@already_checked.include?(link.attribute('src').value)
+    }.map{|link| @@already_checked.push(link.attributes['href'].value); URI.join(target, link.attributes['src'].value).to_s }
     
     css = Nokogiri::HTML(source).css('link').select {|link|
         !link.attribute('href').nil? &&
         link.attribute('href').value != "/" && 
         !link.attribute('href').value.include?('mailto') &&
-        !link.attribute('href').value.include?('javascript:')
-    }.map{|link| URI.join(target, link.attributes['href'].value).to_s }
+        !link.attribute('href').value.include?('javascript:') &&
+        !@@already_checked.include?(link.attribute('href').value)
+    }.map{|link| @@already_checked.push(link.attributes['href'].value); URI.join(target, link.attributes['href'].value).to_s }
     
     javascript = Nokogiri::HTML(source).css('script').select {|link|
         !link.attribute('src').nil? && 
         link.attribute('src').value != "/" && 
         !link.attribute('src').value.include?('mailto') &&
-        !link.attribute('src').value.include?('javascript:')
-    }.map{|link| URI.join(target, link.attributes['src'].value).to_s }
+        !link.attribute('src').value.include?('javascript:') &&
+        !@@already_checked.include?(link.attribute('src').value)
+    }.map{|link| @@already_checked.push(link.attributes['href'].value); URI.join(target, link.attributes['src'].value).to_s }
     
     #puts "Return array: #{images + css + javascript + links}\n"
     return images.uniq + css.uniq + javascript.uniq + links.uniq
