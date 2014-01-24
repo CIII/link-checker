@@ -55,7 +55,7 @@ class LinkChecker
         !link.attribute('src').value.include?('mailto') &&
         !link.attribute('src').value.include?('javascript:') &&
         !@@already_checked.include?(link.attribute('src').value)
-    }.map{|link| @@already_checked.push(link.attributes['href'].value); URI.join(target, link.attributes['src'].value).to_s }
+    }.map{|link| @@already_checked.push(link.attributes['src'].value); URI.join(target, link.attributes['src'].value).to_s }
     
     css = Nokogiri::HTML(source).css('link').select {|link|
         !link.attribute('href').nil? &&
@@ -71,7 +71,7 @@ class LinkChecker
         !link.attribute('src').value.include?('mailto') &&
         !link.attribute('src').value.include?('javascript:') &&
         !@@already_checked.include?(link.attribute('src').value)
-    }.map{|link| @@already_checked.push(link.attributes['href'].value); URI.join(target, link.attributes['src'].value).to_s }
+    }.map{|link| @@already_checked.push(link.attributes['src'].value); URI.join(target, link.attributes['src'].value).to_s }
     
     #puts "Return array: #{images + css + javascript + links}\n"
     return images.uniq + css.uniq + javascript.uniq + links.uniq
