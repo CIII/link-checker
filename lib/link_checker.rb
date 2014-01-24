@@ -189,7 +189,7 @@ class LinkChecker
       if errors.empty?
         unless @options[:no_warnings]
           warnings.each do |warning|
-            Rails.logger.warning("Warning: #{warning.uri_string} Redirected to: #{warning.finial_destination_uri_string}")
+            Rails.logger.warn("Warning: #{warning.uri_string} Redirected to: #{warning.finial_destination_uri_string}")
           end
         end
       else
