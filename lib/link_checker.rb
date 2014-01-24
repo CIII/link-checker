@@ -80,8 +80,10 @@ class LinkChecker
   def self.check_uri(uri, redirected=false)
     response = open(uri).status
      if response[0] == "200"
+       puts ("Checked #{uri.to_s} GOOD!").green
        return Good.new(:uri_string => uri.to_s)
      else
+       puts ("Checked #{uri.to_s} FOUND ERROR CODE #{response[0]}, #{response[1]}!").red
        return Error.new(:uri_string => uri.to_s, :error => response)
      end
   end
@@ -98,20 +100,6 @@ class LinkChecker
       end
     rescue => error
       puts "Error: #{error.to_s}".red
-    end
-
-    # Report the final results.
-    unless @html_files.empty?
-      file_pluralized = (@html_files.size.eql? 1) ? 'file' : 'files'
-      link_pluralized = (@links.size.eql? 1) ? 'link' : 'links'
-      if @errors.empty?
-        puts ("Checked #{@links.size} #{link_pluralized} in #{@html_files.size} " +
-          "HTML #{file_pluralized} and found no errors.").green
-      else
-        error_pluralized = (@errors.size.eql? 1) ? 'error' : 'errors'
-        puts ("Checked #{@links.size} #{link_pluralized} in #{@html_files.size} " +
-          "HTML #{file_pluralized} and found #{@errors.size} #{error_pluralized}.").red
-      end
     end
 
     { :return_code => @return_code, :error => @errors, :warnings => @warnings }
