@@ -41,21 +41,21 @@ class LinkChecker
   # @return [Array] A list of URI strings.
   def self.external_link_uri_strings(source, target)
     links = Nokogiri::HTML(source).css('a').select {|link|
-        !link.attribute('href').nil?
+        !link.attribute('href').nil? &&
         link.attribute('href').value != "/" && 
         !link.attribute('href').value.include?('mailto') &&
         !link.attribute('href').value.include?('javascript:')
     }.map{|link| URI.join(target, link.attributes['href'].value).to_s }
     
     images = Nokogiri::HTML(source).css('img').select {|link|
-        !link.attribute('src').nil?
+        !link.attribute('src').nil? &&
         link.attribute('src').value != "/" && 
         !link.attribute('src').value.include?('mailto') &&
         !link.attribute('src').value.include?('javascript:')
     }.map{|link| URI.join(target, link.attributes['src'].value).to_s }
     
     css = Nokogiri::HTML(source).css('link').select {|link|
-        !link.attribute('href').nil?
+        !link.attribute('href').nil? &&
         link.attribute('href').value != "/" && 
         !link.attribute('href').value.include?('mailto') &&
         !link.attribute('href').value.include?('javascript:')
