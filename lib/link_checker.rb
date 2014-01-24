@@ -147,7 +147,7 @@ class LinkChecker
     Thread.new do
       threads = []
       results = []
-      self.class.external_link_uri_strings(page, @target).each do |uri_string|
+      self.class.external_link_uri_strings(page.encode('UTF-8',{:invalid => :replace,:undef => :replace,:replace => '?'}), @target).each do |uri_string|
         Thread.exclusive { @links << page }
         wait_to_spawn_thread
         threads << Thread.new do
