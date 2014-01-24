@@ -85,10 +85,10 @@ class LinkChecker
   def self.check_uri(uri, redirected=false)
     response = open(uri).status
      if response[0] == "200"
-       Rails.logger.info("#{uri.to_s} --> status: 200\n")
+       Rails.logger.info("[@65467 uri=\"#{uri.to_s}\" status=200 message=\"Status OK\"] Status OK")
        return Good.new(:uri_string => uri.to_s)
      else
-       Rails.logger.error("#{uri.to_s} --> status: #{response[0]}, #{response[1]}\n")
+       Rails.logger.error("[@65467 uri=\"#{uri.to_s}\" status=#{response[0]} message=\"#{response[1]}\"] #{response[1]}")
        return Error.new(:uri_string => uri.to_s, :error => response)
      end
   end
@@ -104,7 +104,7 @@ class LinkChecker
         check_uris_in_files
       end
     rescue => error
-      Rails.logger.error("Target: #{@target} --> Error: #{error.to_s}")
+      Rails.logger.error("[@12345 context=\"#{@target}\" message=\"#{error.to_s}\"] #{error.to_s}")
     end
 
     { :return_code => @return_code, :error => @errors, :warnings => @warnings }
@@ -118,7 +118,7 @@ class LinkChecker
       anemone.storage = Anemone::Storage.PStore('link-checker-crawled-pages.pstore')
       anemone.on_every_page do |crawled_page|
         raise StandardError.new(crawled_page.error) if crawled_page.error
-        threads << check_page(crawled_page.body, crawled_page.url.to_s)
+        threads << check_page(crawled_page.body.encode(Encoding::UTF_8, :invalid => :replace, :undef => :replace, :replace => ''), crawled_page.url.to_s)
         @html_files << crawled_page
       end
     end
@@ -131,7 +131,7 @@ class LinkChecker
     threads = []
     html_file_paths.each do |file|
       wait_to_spawn_thread
-      threads << check_page(open(file), file)
+      threads << check_page(open(file).encode(Encoding::UTF_8, :invalid => :replace, :undef => :replace, :replace => ''), file)
       @html_files << file
     end
     threads.each{|thread| thread.join }
@@ -189,16 +189,16 @@ class LinkChecker
       if errors.empty?
         unless @options[:no_warnings]
           warnings.each do |warning|
-            Rails.logger.warn("Warning: #{warning.uri_string} Redirected to: #{warning.finial_destination_uri_string}")
+            Rails.logger.warn("[@65467 uri=\"#{warning.uri_string}\" status=0 message\"Warning redirected to: #{warning.finial_destination_uri_string}\"]")
           end
         end
       else
         errors.each do |error|
           case error
           when Redirect
-            Rails.logger.error("Link: #{error.uri_string} Redirected to: #{error.final_destination_uri_string}")
+            Rails.logger.error("[@65467 uri=\"#{warning.uri_string}\" status=0 message\"Error redirected to: #{warning.finial_destination_uri_string}\"]")
           when Error
-            Rails.logger.error("Link: #{error.uri_string} Resonse: #{error.error.to_s}")
+            Rails.logger.error("[@65467 uri=\"#{error.uri_string}\" status=0 message\"#{error.error.to_s}\"]")
           end
         end
       end
