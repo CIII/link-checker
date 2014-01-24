@@ -135,7 +135,7 @@ class LinkChecker
       end
     end
 
-    @return_code
+    { :return_code => @return_code, :html_files => @html_files, :links => @links, :error => @errors, :warnings => @warnings }
   end
 
   # Use {http://anemone.rubyforge.org Anemone} to crawl the pages at the @target URL,
