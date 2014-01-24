@@ -85,10 +85,10 @@ class LinkChecker
   def self.check_uri(uri, redirected=false)
     response = open(uri).status
      if response[0] == "200"
-       puts ("Checked #{uri.to_s} GOOD!\n").green
+       puts ("#{uri.to_s} --> status: 200!\n").green
        return Good.new(:uri_string => uri.to_s)
      else
-       puts ("Checked #{uri.to_s} FOUND ERROR CODE #{response[0]}, #{response[1]}!\n").red
+       puts ("#{uri.to_s} --> status: #{response[0]}, #{response[1]}!\n").red
        return Error.new(:uri_string => uri.to_s, :error => response)
      end
   end
