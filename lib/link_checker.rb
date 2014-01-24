@@ -69,7 +69,7 @@ class LinkChecker
     }.map{|link| URI.join(target, link.attributes['src'].value).to_s }
     
     #puts "Return array: #{images + css + javascript + links}\n"
-    return images + css + javascript + links
+    return images.uniq + css.uniq + javascript.uniq + links.uniq
   end
 
   # Check one URL.
