@@ -17,7 +17,6 @@ class LinkChecker
   def initialize(params)
     @options = params[:options] || { }
     @target =  params[:target] || './'
-
     @html_files = []
     @links = []
     @errors = []
@@ -25,6 +24,8 @@ class LinkChecker
     @return_code = 0
 
     @options[:max_threads] ||= 4
+    @options[:no_warnings] ||= false
+    @options[:warnings_are_errors] ||= false
   end
 
   # Find a list of HTML files in the @target path, which was set in the {#initialize} method.
