@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = "link-checker"
-  s.version = "0.9.9"
+  s.version = "1.0.0"
 
   s.authors = ["Ryan Alyn Porter"]
   s.date = "2012-10-09"
