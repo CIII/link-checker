@@ -85,10 +85,10 @@ class LinkChecker
   def self.check_uri(uri, redirected=false)
     response = open(uri).status
      if response[0] == "200"
-       puts ("#{uri.to_s} --> status: 200\n").green
+       Rails.logger.info("#{uri.to_s} --> status: 200\n")
        return Good.new(:uri_string => uri.to_s)
      else
-       puts ("#{uri.to_s} --> status: #{response[0]}, #{response[1]}\n").red
+       Rails.logger.error("#{uri.to_s} --> status: #{response[0]}, #{response[1]}\n")
        return Error.new(:uri_string => uri.to_s, :error => response)
      end
   end
@@ -104,7 +104,7 @@ class LinkChecker
         check_uris_in_files
       end
     rescue => error
-      puts "Error: #{error.to_s}".red
+      Rails.logger.error("Target: #{@target} --> Error: #{error.to_s}")
     end
 
     { :return_code => @return_code, :error => @errors, :warnings => @warnings }
@@ -187,27 +187,18 @@ class LinkChecker
       @warnings = @warnings.concat(warnings)
 
       if errors.empty?
-        message = "Scanning: #{page_name}"
-        if warnings.empty? || @options[:no_warnings]
-          puts message.green
-        else
-          puts message.yellow
-        end
         unless @options[:no_warnings]
           warnings.each do |warning|
-            puts "   Warning: #{warning.uri_string}".yellow
-            puts "     Redirected to: #{warning.final_destination_uri_string}".yellow
+            Rails.logger.warning("Warning: #{warning.uri_string} Redirected to: #{warning.finial_destination_uri_string}")
           end
         end
       else
-        puts "Problem: #{page_name}".red
         errors.each do |error|
-          puts "   Link: #{error.uri_string}".red
           case error
           when Redirect
-            puts "     Redirected to: #{error.final_destination_uri_string}".red
+            Rails.logger.error("Link: #{error.uri_string} Redirected to: #{error.final_destination_uri_string}")
           when Error
-            puts "     Response: #{error.error.to_s}".red
+            Rails.logger.error("Link: #{error.uri_string} Resonse: #{error.error.to_s}")
           end
         end
       end
