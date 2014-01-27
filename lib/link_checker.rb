@@ -97,15 +97,10 @@ class LinkChecker
   # {#check_uris_in_files}, depending on whether the @target looks like an http:// URL or
   # a file path.
   def check_uris
-    begin
-      if @target =~ /^https?\:\/\//
-        check_uris_by_crawling
-      else
-        check_uris_in_files
-      end
-    rescue => error
-      puts error.backtrace.join("\n")
-      #Rails.logger.error("[@12345 context=\"#{@target}\" message=\"#{error.to_s}\"] #{error.to_s}")
+    if @target =~ /^https?\:\/\//
+      check_uris_by_crawling
+    else
+      check_uris_in_files
     end
 
     { :return_code => @return_code, :error => @errors, :warnings => @warnings }
@@ -116,7 +111,7 @@ class LinkChecker
   def check_uris_by_crawling
     threads = []
     Anemone.crawl(@target) do |anemone|
-      anemone.storage = Anemone::Storage.PStore('/tmp/link-checker-crawled-pages.pstore')
+      #anemone.storage = Anemone::Storage.PStore('/tmp/link-checker-crawled-pages.pstore')
       anemone.on_every_page do |crawled_page|
         raise StandardError.new(crawled_page.error) if crawled_page.error
         threads << check_page(crawled_page.body.force_encoding('ASCII-8BIT').encode('UTF-8', :invalid => :replace, :undef => :replace, :replace => '?'), crawled_page.url.to_s)
