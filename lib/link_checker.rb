@@ -97,12 +97,15 @@ class LinkChecker
   # {#check_uris_in_files}, depending on whether the @target looks like an http:// URL or
   # a file path.
   def check_uris
-    if @target =~ /^https?\:\/\//
-      check_uris_by_crawling
-    else
-      check_uris_in_files
+    begin
+      if @target =~ /^https?\:\/\//
+        check_uris_by_crawling
+      else
+        check_uris_in_files
+      end
+    rescue => error
+      Rails.logger.error("[@65467 uri=\"#{@target}\" status=0 message=\"#{error.message}\"] #{error.message}")
     end
-
     { :return_code => @return_code, :error => @errors, :warnings => @warnings }
   end
 
