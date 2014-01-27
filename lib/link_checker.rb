@@ -118,7 +118,7 @@ class LinkChecker
       anemone.storage = Anemone::Storage.PStore('link-checker-crawled-pages.pstore')
       anemone.on_every_page do |crawled_page|
         raise StandardError.new(crawled_page.error) if crawled_page.error
-        threads << check_page(crawled_page.body.unpack('C*').pack('U*'), crawled_page.url.to_s)
+        threads << check_page(crawled_page.body.encode('utf-8','ASCII-8BIT'), crawled_page.url.to_s)
         @html_files << crawled_page
       end
     end
@@ -131,7 +131,7 @@ class LinkChecker
     threads = []
     html_file_paths.each do |file|
       wait_to_spawn_thread
-      threads << check_page(open(file).unpack('C*').pack('U*'), file)
+      threads << check_page(open(file).encode('utf-8','ASCII-8BIT'), file)
       @html_files << file
     end
     threads.each{|thread| thread.join }
@@ -147,7 +147,7 @@ class LinkChecker
     Thread.new do
       threads = []
       results = []
-      self.class.external_link_uri_strings(page.unpack('C*').pack('U*'), @target).each do |uri_string|
+      self.class.external_link_uri_strings(page.encode('utf-8','ASCII-8BIT'), @target).each do |uri_string|
         Thread.exclusive { @links << page }
         wait_to_spawn_thread
         threads << Thread.new do
