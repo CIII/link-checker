@@ -104,7 +104,8 @@ class LinkChecker
         check_uris_in_files
       end
     rescue => error
-      Rails.logger.error("[@12345 context=\"#{@target}\" message=\"#{error.to_s}\"] #{error.to_s}")
+      puts error.backtrace.join("\n")
+      #Rails.logger.error("[@12345 context=\"#{@target}\" message=\"#{error.to_s}\"] #{error.to_s}")
     end
 
     { :return_code => @return_code, :error => @errors, :warnings => @warnings }
